@@ -1,8 +1,12 @@
 import time
 
 import keras
+import keras.backend as K
+import numpy as np
 
 from utils import *
+
+keras.backend.set_learning_phase(0)
 
 
 def main():
@@ -26,15 +30,15 @@ def main():
         img = crop_and_resize(img, box)
         img = overlay_box(img, box, (class_val, 1.0))
 
-        box_time_series.append(box)
+        box_time_series.append(np.array(box))
         class_time_series.append(class_val)
         out.write(img)
 
     print('Processed Seed Frames.')
-    box_model = keras.models.load_model('./models/box_model_07_28_20.hdf5')
+    box_model = keras.models.load_model('./models/box_model_08_03_20.h5')
     box_model.trainable = False
     # box_model.summary()
-    img_model = keras.models.load_model('./models/img_model_07_29_20.hdf5')
+    img_model = keras.models.load_model('./models/img_model_08_03_20.hdf5')
     img_model.trainable = False
     # img_model.summary()
     print('Loaded models.\nApplying model to frames.')
@@ -49,9 +53,10 @@ def main():
         img = frame[0]
 
         input_boxes = np.expand_dims(
-            box_time_series[-frame_history:], axis=0).astype(np.float32)
+            np.array(box_time_series[-frame_history:]), axis=0).astype(np.float32)
 
-        box_prediction = box_model.predict(input_boxes, batch_size=16)
+        box_prediction = box_model.predict(
+            input_boxes, batch_size=1, verbose=0)
         box_prediction = np.round(box_prediction)[0].astype(int)
 
         checkpoints.append(time.time() - last_time)
@@ -61,7 +66,8 @@ def main():
         cropped_imgs = np.asarray(
             [crop_and_resize(img, box) for box in box_list])
 
-        img_predictions = img_model.predict(cropped_imgs, batch_size=128)
+        img_predictions = img_model.predict(
+            cropped_imgs, batch_size=50, verbose=0)
         img_predictions = [map_to_class(pred) for pred in img_predictions]
 
         checkpoints.append(time.time() - last_time)
@@ -92,6 +98,8 @@ def main():
         print(
             f'\rStatus: {count} out of {len(test_data)}, FPS: {(1.0 / (time.time() - start_time)):.4f}; {np.round(checkpoints, 3)}',
             end='')
+
+        K.clear_session()
 
     out.release()
     print('\nVideo Saved.')
