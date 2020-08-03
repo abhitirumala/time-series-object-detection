@@ -126,6 +126,10 @@ dmypy.json
 
 # Large Datasets
 data/raw/core50_350x350/
+
+# TODO: Large Files until Git LFS Quota reset
+*.npy
+*.csv
 *.record
 
 # tensorflow object detection api model
