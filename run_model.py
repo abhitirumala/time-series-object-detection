@@ -13,9 +13,9 @@ def main():
                              delimiter='\n', dtype=np.str)
     print('Loaded class names.')
 
-    dataset = np.load('./data/test/test_0.npy', allow_pickle=True)
+    dataset = np.load('./data/test/test_1.npy', allow_pickle=True)
     print('Loaded test dataset.')
-    out = cv2.VideoWriter('./out/test_video_autobox_01.mp4',
+    out = cv2.VideoWriter('./out/test_video_autobox_02.mp4',
                           cv2.VideoWriter_fourcc(*'mp4v'), 20.0, (350, 350))
 
     seed_data, test_data = dataset[:frame_history], dataset[frame_history:]
@@ -35,11 +35,11 @@ def main():
     print('Processed Seed Frames.')
     box_model = keras.models.load_model('./models/box_model_08_07_20.h5')
     box_model.trainable = False
-    box_model.summary()
+    # box_model.summary()
     img_model = keras.models.load_model('./models/img_model_07_29_20.hdf5')
     img_model.trainable = False
-    img_model.summary()
-    print('Loaded models.\nApplying model to frames.')
+    # img_model.summary()
+    print('Loaded models.\nApplying algorithm to frames.')
 
     total_fps = 0
     count = 0
@@ -97,7 +97,7 @@ def main():
             f'\rStatus: {count} out of {len(test_data)}, FPS: {(1.0 / (time.time() - start_time)):6.4f}; {np.round(checkpoints, 3)}',
             end='')
 
-    print(f'\nAverage FPS: {(total_fps/count):6.4f}')
+    print(f'\nAverage FPS: {(total_fps / count):6.4f}')
     out.release()
     print('Video Saved.')
 

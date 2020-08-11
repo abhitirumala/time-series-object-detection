@@ -126,6 +126,7 @@ dmypy.json
 
 # Large Datasets
 data/raw/core50_350x350/
+data/raw/bbox/
 
 # TODO: Large Files until Git LFS Quota reset
 *.npy
@@ -133,4 +134,4 @@ data/raw/core50_350x350/
 *.record
 
 # tensorflow object detection api model
-models/tf_api_models/
+# models/tf_api_models/

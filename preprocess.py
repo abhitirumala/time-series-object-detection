@@ -1,17 +1,17 @@
 import pandas as pd
 from keras.utils import to_categorical
 
-from src.utils import *
+from utils import *
 
 
 def get_file_path(name):
     parsed = name.replace('.png', '').split('_')[1:]
     parsed = [int(n) for n in parsed]
-    return f'../data/Core50/core50_350x350/s{parsed[0]}/o{parsed[1]}/{name}'
+    return f'data/raw/core50_350x350/s{parsed[0]}/o{parsed[1]}/{name}'
 
 
 def preprocess_data():
-    train = pd.read_csv('../data/Core50/core50_train.csv')
+    train = pd.read_csv('data/Core50/core50_train.csv')
 
     # COLUMN MODIFICATION
     train['Filename'] = train['Filename'].str.replace('jpg', 'png')
@@ -20,17 +20,19 @@ def preprocess_data():
 
     return train
 
+
 def preprocess_and_save(sample=None):
-    train = pd.read_csv('../data/Core50/core50_train.csv')
+    train = pd.read_csv('./data/raw/core50_train.csv')
 
     # COLUMN MODIFICATION
-    train['filename'] = train['filename'].str.replace('jpg', 'png').apply(get_file_path)
-    train['class'] = train['class'] - 1
+    train['filename'] = train['filename'].str.replace(
+        'jpg', 'png').apply(get_file_path)
+    train['class'] = train['class']
 
     if sample is not None:
         train = train.sample(sample)
 
-    train.to_csv('../data/Core50/core50_preprocessed_test.csv', index=False)
+    train.to_csv('data/train/tf_api_train/test.csv', index=False)
 
     return train
 
@@ -75,9 +77,11 @@ def gen_test_dataset(starting_index=0, save_path='.'):
 
 
 def preprocess_box_time_series(starting_index=0, history_size=40):
-    train = pd.read_csv('../data/Core50/core50_train.csv')[['xmin', 'ymin', 'xmax', 'ymax']].values
+    train = pd.read_csv(
+        '../data/Core50/core50_train.csv')[['xmin', 'ymin', 'xmax', 'ymax']].values
 
-    x_dataset, y_dataset = time_series_segment(train, starting_index, starting_index + 300, history_size, 0, 1)
+    x_dataset, y_dataset = time_series_segment(
+        train, starting_index, starting_index + 300, history_size, 0, 1)
 
     for i in range(starting_index + 1, starting_index + 150):
         x_train_single, y_train_single = time_series_segment(train, i * 300, i * 300 + 300,
@@ -114,6 +118,7 @@ def main():
     # gen_test_dataset(starting_index=36000, save_path=SAVE_PATH)
     # x_dataset, y_dataset = gen_train_images(size=35000)
     preprocess_and_save(sample=1000)
+
 
 if __name__ == "__main__":
     main()
