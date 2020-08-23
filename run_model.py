@@ -30,7 +30,7 @@ def main2():
     box_model = keras.models.load_model('models/box_model_08_07_20.h5')
     box_model.trainable = False
     # box_model.summary()
-    img_model = keras.models.load_model('models/img_model_07_29_20.hdf5')
+    img_model = keras.models.load_model('models/img_model_08_23_20.h5')
     img_model.trainable = False
     # img_model.summary()
     print('Loaded models.\nApplying algorithm to frames.')
@@ -49,13 +49,14 @@ def main2():
         best = np.argmax(pred_conf)
 
         best_box = box_list[best]
-        img = overlay_box(img, best_box, (class_names[pred_classes[best]], pred_conf[best]), color_BGR=(0, 0, 255))
+        img = overlay_box(
+            img, best_box, (class_names[pred_classes[best]], pred_conf[best]), color_BGR=(0, 0, 255))
         img = overlay_box(img, box, (class_names[class_val], 100.0))
 
         box_time_series.append(best_box)
         class_time_series.append(pred_classes[best])
         out.write(img)
-        
+
         print(
             f'\rFPS: {(1.0 / (time.time() - start_time)):6.4f}',
             end='')
@@ -90,7 +91,7 @@ def main2():
 
         common_class = mode(class_time_series[-frame_history:])
 
-        img_predictions = [(pred[0], pred[1] + 0.1) if (pred[0] == common_class)
+        img_predictions = [(pred[0], pred[1]) if (pred[0] == common_class)
                            else pred for pred in img_predictions]
 
         pred_classes, pred_conf = zip(*img_predictions)
