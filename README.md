@@ -19,8 +19,8 @@ In a nutshell the current algorithm follows these steps:
    3. Generate boxes around the predicted box to account for spontaneous changes
 
       <div>
-         <img src="https://raw.githubusercontent.com/abhitirumala/continual-object-detection/master/public/one_box.png" alt="one_box" height="400" />
-         <img src="https://raw.githubusercontent.com/abhitirumala/continual-object-detection/master/public/multi_box.png" alt="multiple boxes" height="400" />
+         <img src="https://raw.githubusercontent.com/abhitirumala/time-series-object-detection/master/public/one_box.png" alt="one_box" height="400" />
+         <img src="https://raw.githubusercontent.com/abhitirumala/time-series-object-detection/master/public/multi_box.png" alt="multiple boxes" height="400" />
       <div>
 
    4. Run the CNN model and predict the classes for each of the generated bounding boxes
